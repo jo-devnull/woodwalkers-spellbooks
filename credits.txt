@@ -1,0 +1,6 @@
+Mods:
+- Iron's Spells 'n Spellbooks: https://www.curseforge.com/minecraft/mc-mods/irons-spells-n-spellbooks
+- Woodwalkers: https://www.curseforge.com/minecraft/mc-mods/woodwalkers
+
+Assets:
+- Shapeshifting Spell icon from: https://pixerelia.itch.io/vas-basic-spells-and-buffs
