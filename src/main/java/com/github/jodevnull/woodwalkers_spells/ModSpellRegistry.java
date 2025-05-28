@@ -19,5 +19,5 @@ public class ModSpellRegistry
         return SPELLS.register(spell.getSpellName(), () -> spell);
     }
 
-    public static final RegistryObject<AbstractSpell> SUPER_HEAL_SPELL = registerSpell(new ShapeshiftingSpell());
+    public static final RegistryObject<AbstractSpell> SHAPESHIFTING_SPELL = registerSpell(new ShapeshiftingSpell());
 }
