@@ -4,8 +4,7 @@
   "package": "com.github.jodevnull.woodwalkers_spells.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "woodwalkers_spellbooks.refmap.json",
-  "mixins": [
-  ],
+  "mixins": [],
   "client": [
     "MixinKeypressHandler",
     "MixinWalkersClient"

@@ -35,7 +35,7 @@ public class ShapeshiftingSpell extends AbstractSpell
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-            Component.translatable("ui.woodwalkers_spellbooks.xp_required", getRequiredXP(spellLevel))
+            Component.translatable("ui.woodwalkers_spellbooks.xp_required", getRequiredXPlevel(spellLevel))
         );
     }
 
@@ -50,7 +50,7 @@ public class ShapeshiftingSpell extends AbstractSpell
         this.manaCostPerLevel = 10;
         this.baseSpellPower = 8;
         this.spellPowerPerLevel = 1;
-        this.castTime = 40;
+        this.castTime = 60;
         this.baseManaCost = 40;
     }
 
@@ -81,25 +81,41 @@ public class ShapeshiftingSpell extends AbstractSpell
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        boolean canCast = false;
+        boolean canCast = true;
+        LivingEntity target = getTarget(level, entity, playerMagicData);
 
-        if (entity instanceof ServerPlayer player) {
-            canCast = player.totalExperience >= getRequiredXP(spellLevel);
+        if (target != null && entity instanceof ServerPlayer player) {
+            canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
 
             if (!canCast)
                 player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.not_enough_xp"), true);
+            else
+                Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
         }
-
-        if (canCast)
-            Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
 
         return canCast;
     }
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+        int requiredLevel = getRequiredXPlevel(spellLevel);
+        LivingEntity target = getTarget(level, entity, playerMagicData);
+
+        if (entity instanceof ServerPlayer player) {
+            if (target != null) {
+                PlayerShapeChanger.change2ndShape(player, ShapeType.from(target));
+                shapeshift(player);
+                player.giveExperienceLevels(-requiredLevel);
+            } else {
+                shapeshift(player);
+            }
+        }
+
+        super.onCast(level, spellLevel, entity, castSource, playerMagicData);
+    }
+
+    private static LivingEntity getTarget(Level level, LivingEntity entity, MagicData playerMagicData) {
         LivingEntity target = null;
-        int requiredXP = getRequiredXP(spellLevel);
 
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
             target = castTargetingData.getTarget((ServerLevel) level);
@@ -113,21 +129,17 @@ public class ShapeshiftingSpell extends AbstractSpell
             }
         }
 
-        if (target != null && entity instanceof ServerPlayer player) {
-            PlayerShapeChanger.change2ndShape(player, ShapeType.from(target));
-            shapeshift(player);
-            player.giveExperiencePoints(-requiredXP);
-        }
-
-        if (target == null && entity instanceof ServerPlayer player) {
-            if (shapeshift(player))
-                player.giveExperiencePoints(-requiredXP);
-        }
-
-        super.onCast(level, spellLevel, entity, castSource, playerMagicData);
+        return target;
     }
 
-    private boolean shapeshift(ServerPlayer player) {
+    static int getRequiredXPlevel(int spellLevel) {
+        if (spellLevel >= 5) return 3;
+        if (spellLevel >= 3) return 4;
+
+        return 5;
+    }
+
+    public static void shapeshift(ServerPlayer player) {
         ShapeType<LivingEntity> type = null;
 
         if (PlayerShape.getCurrentShape(player) == null)
@@ -137,11 +149,5 @@ public class ShapeshiftingSpell extends AbstractSpell
             PlayerShape.updateShapes(player, null);
         else
             PlayerShape.updateShapes(player, type.create(CEntity.level(player), player));
-
-        return type != null;
-    }
-
-    static int getRequiredXP(int spellLevel) {
-        return 80 - 2 * (spellLevel * spellLevel);
     }
 }

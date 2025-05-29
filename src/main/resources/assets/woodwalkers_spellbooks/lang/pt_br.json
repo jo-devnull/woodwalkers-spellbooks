@@ -1,6 +1,6 @@
 {
   "spell.woodwalkers_spellbooks.shapeshifting": "Metamorfose",
 
-  "ui.woodwalkers_spellbooks.xp_required": "%d custo de experiência",
+  "ui.woodwalkers_spellbooks.xp_required": "precisa de %d níveis de xp",
   "ui.woodwalkers_spellbooks.not_enough_xp": "Experiência insuficiente"
 }

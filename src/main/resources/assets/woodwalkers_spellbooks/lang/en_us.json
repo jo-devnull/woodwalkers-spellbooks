@@ -1,6 +1,6 @@
 {
   "spell.woodwalkers_spellbooks.shapeshifting": "Shapeshifting",
 
-  "ui.woodwalkers_spellbooks.xp_required": "%d experience cost",
+  "ui.woodwalkers_spellbooks.xp_required": "needs %d levels of xp",
   "ui.woodwalkers_spellbooks.not_enough_xp": "Not enough experience"
 }
