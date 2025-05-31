@@ -84,13 +84,18 @@ public class ShapeshiftingSpell extends AbstractSpell
         boolean canCast = true;
         LivingEntity target = getTarget(level, entity, playerMagicData);
 
-        if (target != null && entity instanceof ServerPlayer player) {
-            canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
+        if (entity instanceof ServerPlayer player) {
+            if (target != null) {
+                canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
 
-            if (!canCast)
-                player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.not_enough_xp"), true);
-            else
-                Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
+                if (!canCast)
+                    player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.not_enough_xp"), true);
+                else
+                    Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
+            } else if (!hasSecondShape(player)) {
+                canCast = false;
+                player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.cant_shapeshift"), true);
+            }
         }
 
         return canCast;
@@ -140,14 +145,24 @@ public class ShapeshiftingSpell extends AbstractSpell
     }
 
     public static void shapeshift(ServerPlayer player) {
-        ShapeType<LivingEntity> type = null;
-
-        if (PlayerShape.getCurrentShape(player) == null)
-            type = (ShapeType<LivingEntity>) ((PlayerDataProvider) player).walkers$get2ndShape();
+        var type = getSecondShape(player);
 
         if (type == null)
             PlayerShape.updateShapes(player, null);
         else
             PlayerShape.updateShapes(player, type.create(CEntity.level(player), player));
+    }
+
+    public static ShapeType<LivingEntity> getSecondShape(ServerPlayer player) {
+        ShapeType<LivingEntity> type = null;
+
+        if (PlayerShape.getCurrentShape(player) == null)
+            type = (ShapeType<LivingEntity>) ((PlayerDataProvider) player).walkers$get2ndShape();
+
+        return type;
+    }
+
+    public boolean hasSecondShape(ServerPlayer player) {
+        return getSecondShape(player) != null;
     }
 }
