@@ -1,6 +1,8 @@
 package com.github.jodevnull.woodwalkers_spells.spells;
 
+import com.github.jodevnull.woodwalkers_spells.core.Config;
 import com.github.jodevnull.woodwalkers_spells.WoodwalkersSpellBooks;
+import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
@@ -18,14 +20,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import tocraft.craftedcore.patched.CEntity;
-import tocraft.walkers.api.PlayerShape;
 import tocraft.walkers.api.PlayerShapeChanger;
 import tocraft.walkers.api.variant.ShapeType;
-import tocraft.walkers.impl.PlayerDataProvider;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.github.jodevnull.woodwalkers_spells.core.Shapeshifting.*;
 
 @AutoSpellConfig
 public class ShapeshiftingSpell extends AbstractSpell
@@ -34,8 +35,12 @@ public class ShapeshiftingSpell extends AbstractSpell
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+        int duration = Shapeshifting.getShapeshiftDuration(spellLevel);
+        int xpNeeded = getRequiredXPlevel(spellLevel);
+
         return List.of(
-            Component.translatable("ui.woodwalkers_spellbooks.xp_required", getRequiredXPlevel(spellLevel))
+            Component.translatable("ui.woodwalkers_spellbooks.xp_required", xpNeeded),
+            Component.translatable("ui.woodwalkers_spellbooks.spell_duration", duration)
         );
     }
 
@@ -43,7 +48,7 @@ public class ShapeshiftingSpell extends AbstractSpell
         .setMinRarity(SpellRarity.RARE)
         .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
         .setMaxLevel(6)
-        .setCooldownSeconds(100)
+        .setCooldownSeconds(40)
         .build();
 
     public ShapeshiftingSpell() {
@@ -86,15 +91,20 @@ public class ShapeshiftingSpell extends AbstractSpell
 
         if (entity instanceof ServerPlayer player) {
             if (target != null) {
-                canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
+                if (Config.getXpCostEnabled()) {
+                    canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
 
-                if (!canCast)
-                    player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.not_enough_xp"), true);
-                else
+                    if (!canCast)
+                        player.sendSystemMessage(errorMessage("ui.woodwalkers_spellbooks.not_enough_xp"), true);
+
+                }
+
+                if (canCast)
                     Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
+
             } else if (!hasSecondShape(player)) {
                 canCast = false;
-                player.sendSystemMessage(Component.translatable("ui.woodwalkers_spellbooks.cant_shapeshift"), true);
+                player.sendSystemMessage(errorMessage("ui.woodwalkers_spellbooks.cant_shapeshift"), true);
             }
         }
 
@@ -109,10 +119,12 @@ public class ShapeshiftingSpell extends AbstractSpell
         if (entity instanceof ServerPlayer player) {
             if (target != null) {
                 PlayerShapeChanger.change2ndShape(player, ShapeType.from(target));
-                shapeshift(player);
-                player.giveExperienceLevels(-requiredLevel);
+                doShapeshift(player, spellLevel);
+
+                if (Config.getXpCostEnabled())
+                    player.giveExperienceLevels(-requiredLevel);
             } else {
-                shapeshift(player);
+                doShapeshift(player, spellLevel);
             }
         }
 
@@ -138,31 +150,6 @@ public class ShapeshiftingSpell extends AbstractSpell
     }
 
     static int getRequiredXPlevel(int spellLevel) {
-        if (spellLevel >= 5) return 3;
-        if (spellLevel >= 3) return 4;
-
-        return 5;
-    }
-
-    public static void shapeshift(ServerPlayer player) {
-        var type = getSecondShape(player);
-
-        if (type == null)
-            PlayerShape.updateShapes(player, null);
-        else
-            PlayerShape.updateShapes(player, type.create(CEntity.level(player), player));
-    }
-
-    public static ShapeType<LivingEntity> getSecondShape(ServerPlayer player) {
-        ShapeType<LivingEntity> type = null;
-
-        if (PlayerShape.getCurrentShape(player) == null)
-            type = (ShapeType<LivingEntity>) ((PlayerDataProvider) player).walkers$get2ndShape();
-
-        return type;
-    }
-
-    public boolean hasSecondShape(ServerPlayer player) {
-        return getSecondShape(player) != null;
+        return Config.getXpCost();
     }
 }

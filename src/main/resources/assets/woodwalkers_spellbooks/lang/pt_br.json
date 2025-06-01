@@ -1,7 +1,9 @@
 {
   "spell.woodwalkers_spellbooks.shapeshifting": "Metamorfose",
+  "effect.woodwalkers_spellbooks.shapeshifter": "Metamorfose",
 
-  "ui.woodwalkers_spellbooks.xp_required": "precisa de %d níveis de xp",
+  "ui.woodwalkers_spellbooks.xp_required": "requer %d níveis de xp",
+  "ui.woodwalkers_spellbooks.spell_duration": "dura %d segundos",
   "ui.woodwalkers_spellbooks.not_enough_xp": "Experiência insuficiente",
   "ui.woodwalkers_spellbooks.cant_shapeshift": "Primeiro uso do feitiço deve ser em uma entidade"
 }
