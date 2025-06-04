@@ -39,13 +39,19 @@ public class Shapeshifting
             int duration = 20 * getShapeshiftDuration(spellLevel);
 
             PlayerShape.updateShapes(player, type.create(CEntity.level(player), player));
-            player.addEffect(new MobEffectInstance(effect, duration, 1, false, false));
+
+            if (!infinitySpell(player))
+                player.addEffect(new MobEffectInstance(effect, duration, 1, false, false));
         }
     }
 
     public static int getShapeshiftDuration(int spellLevel) {
         List<Integer> durations = Config.getSpellDuration();
         return durations.get(Math.max(0, Math.min(spellLevel - 1, durations.size())));
+    }
+
+    public static boolean infinitySpell(ServerPlayer player) {
+        return (player.isCreative() && Config.getInfSpellCreative()) || (!player.isCreative() && Config.getInfSpell());
     }
 
     public static MutableComponent errorMessage(String name) {

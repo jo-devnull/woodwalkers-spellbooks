@@ -91,12 +91,11 @@ public class ShapeshiftingSpell extends AbstractSpell
 
         if (entity instanceof ServerPlayer player) {
             if (target != null) {
-                if (Config.getXpCostEnabled()) {
+                if (needsXp(player)) {
                     canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
 
                     if (!canCast)
                         player.sendSystemMessage(errorMessage("ui.woodwalkers_spellbooks.not_enough_xp"), true);
-
                 }
 
                 if (canCast)
@@ -121,7 +120,7 @@ public class ShapeshiftingSpell extends AbstractSpell
                 PlayerShapeChanger.change2ndShape(player, ShapeType.from(target));
                 doShapeshift(player, spellLevel);
 
-                if (Config.getXpCostEnabled())
+                if (needsXp(player))
                     player.giveExperienceLevels(-requiredLevel);
             } else {
                 doShapeshift(player, spellLevel);
@@ -151,5 +150,10 @@ public class ShapeshiftingSpell extends AbstractSpell
 
     static int getRequiredXPlevel(int spellLevel) {
         return Config.getXpCost();
+    }
+
+    static boolean needsXp(ServerPlayer player) {
+        return (player.isCreative() && Config.getXpCostCreative()) ||
+            (!player.isCreative() && Config.getXpCostEnabled());
     }
 }

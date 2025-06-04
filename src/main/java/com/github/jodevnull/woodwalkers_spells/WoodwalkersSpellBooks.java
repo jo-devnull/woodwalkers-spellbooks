@@ -5,6 +5,7 @@ import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -37,7 +38,7 @@ public class WoodwalkersSpellBooks {
         public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
             if (event.side.isServer() && event.phase == TickEvent.Phase.START) {
                 if (event.player instanceof ServerPlayer player) {
-                    if (player.tickCount % 20 != 0 || player.isCreative())
+                    if (player.tickCount % 20 != 0 || player.isCreative() || Shapeshifting.infinitySpell(player))
                         return;
 
                     MobEffect shapeshiftEffect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
@@ -45,7 +46,9 @@ public class WoodwalkersSpellBooks {
 
                     if (!player.hasEffect(shapeshiftEffect) && secondShape != null) {
                         Shapeshifting.doShapeshift(player, 1);
-                    } else if (player.hasEffect(shapeshiftEffect) && secondShape == null) {
+                    }
+
+                    else if (player.hasEffect(shapeshiftEffect) && secondShape == null) {
                         player.removeEffect(shapeshiftEffect);
                     }
                 }
