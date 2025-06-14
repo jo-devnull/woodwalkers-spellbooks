@@ -90,7 +90,7 @@ public class ShapeshiftingSpell extends AbstractSpell
         LivingEntity target = getTarget(level, entity, playerMagicData);
 
         if (entity instanceof ServerPlayer player) {
-            if (target != null) {
+            if (target != null && !Shapeshifting.isTransformed(player)) {
                 if (needsXp(player)) {
                     canCast = player.experienceLevel >= getRequiredXPlevel(spellLevel);
 
@@ -99,7 +99,7 @@ public class ShapeshiftingSpell extends AbstractSpell
                 }
 
                 if (canCast)
-                    Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
+                    Utils.preCastTargetHelper(level, entity, playerMagicData, this, 16, .25f, false);
 
             } else if (!hasSecondShape(player)) {
                 canCast = false;
@@ -116,7 +116,7 @@ public class ShapeshiftingSpell extends AbstractSpell
         LivingEntity target = getTarget(level, entity, playerMagicData);
 
         if (entity instanceof ServerPlayer player) {
-            if (target != null) {
+            if (target != null && !Shapeshifting.isTransformed(player)) {
                 PlayerShapeChanger.change2ndShape(player, ShapeType.from(target));
                 doShapeshift(player, spellLevel);
 
@@ -149,11 +149,11 @@ public class ShapeshiftingSpell extends AbstractSpell
     }
 
     static int getRequiredXPlevel(int spellLevel) {
-        return Config.getXpCost();
+        return Config.xpLevelCost.get().get(spellLevel - 1);
     }
 
     static boolean needsXp(ServerPlayer player) {
-        return (player.isCreative() && Config.getXpCostCreative()) ||
-            (!player.isCreative() && Config.getXpCostEnabled());
+        return (player.isCreative() && Config.xpCostInCreative.get()) ||
+            (!player.isCreative() && Config.isXpCostEnabled.get());
     }
 }

@@ -29,6 +29,10 @@ public class Shapeshifting
         return ((PlayerDataProvider) player).walkers$get2ndShape() != null;
     }
 
+    public static boolean isTransformed(ServerPlayer player) {
+        return PlayerShape.getCurrentShape(player) != null;
+    }
+
     public static void doShapeshift(ServerPlayer player, int spellLevel) {
         var type = getSecondShape(player);
 
@@ -46,12 +50,12 @@ public class Shapeshifting
     }
 
     public static int getShapeshiftDuration(int spellLevel) {
-        List<Integer> durations = Config.getSpellDuration();
+        List<Integer> durations = Config.spellDuration.get();
         return durations.get(Math.max(0, Math.min(spellLevel - 1, durations.size())));
     }
 
     public static boolean infinitySpell(ServerPlayer player) {
-        return (player.isCreative() && Config.getInfSpellCreative()) || (!player.isCreative() && Config.getInfSpell());
+        return (player.isCreative() && Config.endlessSpellOnCreative.get()) || (!player.isCreative() && Config.endlessSpell.get());
     }
 
     public static MutableComponent errorMessage(String name) {

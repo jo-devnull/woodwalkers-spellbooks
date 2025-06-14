@@ -3,9 +3,9 @@ package com.github.jodevnull.woodwalkers_spells;
 import com.github.jodevnull.woodwalkers_spells.core.Config;
 import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import com.mojang.logging.LogUtils;
+import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,6 +30,17 @@ public class WoodwalkersSpellBooks {
 
         SpellRegistry.register(modEventBus);
         EffectRegistry.register(modEventBus);
+    }
+
+    @Mod.EventBusSubscriber
+    public static class SpellPreCastHandler {
+        @SubscribeEvent
+        public static void onSpellPreCast(SpellPreCastEvent event) {
+            if (event.getEntity() instanceof ServerPlayer player) {
+                if (!Config.canUseSpellsTransformed.get() && Shapeshifting.isTransformed(player))
+                    event.setCanceled(true);
+            }
+        }
     }
 
     @Mod.EventBusSubscriber

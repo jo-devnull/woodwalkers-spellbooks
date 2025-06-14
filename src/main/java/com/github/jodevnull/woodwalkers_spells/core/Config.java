@@ -9,42 +9,48 @@ public class Config
     public static final ForgeConfigSpec.Builder mBuilder = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec mSpec;
 
-    public static final ForgeConfigSpec.BooleanValue mXpCostEnabled;
-    public static final ForgeConfigSpec.BooleanValue mXpCostCreative;
-    public static final ForgeConfigSpec.BooleanValue mInfinitySpell;
-    public static final ForgeConfigSpec.BooleanValue mInfinitySpellCreative;
-    public static final ForgeConfigSpec.ConfigValue<Integer> mXpLevelCost;
-    public static final ForgeConfigSpec.ConfigValue<List<Integer>> mSpellDuration;
+    public static final ForgeConfigSpec.BooleanValue isXpCostEnabled;
+    public static final ForgeConfigSpec.BooleanValue xpCostInCreative;
+    public static final ForgeConfigSpec.BooleanValue endlessSpell;
+    public static final ForgeConfigSpec.BooleanValue endlessSpellOnCreative;
+    public static final ForgeConfigSpec.BooleanValue canUseSpellsTransformed;
+    public static final ForgeConfigSpec.ConfigValue<List<Integer>> xpLevelCost;
+    public static final ForgeConfigSpec.ConfigValue<List<Integer>> spellDuration;
 
     static {
         mBuilder.push("Woodwalkers Spellbooks Configuration");
 
-        mXpCostEnabled = mBuilder
-            .comment(" If the shapeshifting spell needs XP levels to work (default true)")
+        isXpCostEnabled = mBuilder
+            .comment("If the shapeshifting spell needs XP levels to work (default true)")
             .define("Requires XP", true);
 
-        mXpCostCreative = mBuilder
-            .comment(" If the shapeshifting spell needs XP levels to work when in creative mode (default false)")
+        xpCostInCreative = mBuilder
+            .comment("If the shapeshifting spell needs XP levels to work when in creative mode (default false)")
             .define("Requires XP On Creative", false);
 
-        mXpLevelCost = mBuilder
-            .comment(" How much XP Levels the spell costs (default 4)")
-            .define("Xp Level Cost", 4);
-
-        mInfinitySpell = mBuilder
-            .comment(" If set to true, players will stay transformed indefinitely (default false).")
+        endlessSpell = mBuilder
+            .comment("If set to true, players will stay transformed indefinitely (default false).")
             .define("Infinity Spell", false);
 
-        mInfinitySpellCreative = mBuilder
-            .comment(" If set to true, players will stay transformed indefinitely when in creative mode (default true).")
+        endlessSpellOnCreative = mBuilder
+            .comment("If set to true, players will stay transformed indefinitely when in creative mode (default true).")
             .define("Infinity Spell On Creative", true);
 
-        mSpellDuration = mBuilder
-            .comment(" This should be a list with 6 numbers defining how long (in seconds) the transformation lasts.")
-            .comment(" Each element position on this list corresponds to the spell level. For example, the first")
-            .comment(" element determines the spell duration at level 1.")
-            .comment(" Default: [30, 45, 75, 90, 120, 240]")
+        canUseSpellsTransformed = mBuilder
+            .comment("If players are allowed to use spell while transformed (default false).")
+            .define("Spells while Transformed", false);
+
+        spellDuration = mBuilder
+            .comment("Defines how long the transformation lasts per spell level (1-6).")
+            .comment("Should be a list of 6 integers, where each element in the list")
+            .comment("corresponds to the duration at that level (starting from 1)")
             .define("Spell Duration per Level", List.of(30, 45, 75, 90, 120, 240), list -> isFixedList(list, 6));
+
+        xpLevelCost = mBuilder
+            .comment("Defines how much xp the shapeshifting spell costs per level (1-6).")
+            .comment("Should be a list of 6 integers, where each element in the list")
+            .comment("corresponds to the xp level needed at that level (starting from 1)")
+            .define("Xp Level Cost", List.of(6, 5, 4, 3, 2, 1), list -> isFixedList(list, 6));
 
         mBuilder.pop();
 
@@ -54,25 +60,5 @@ public class Config
     private static boolean isFixedList(Object list, int size) {
         return list instanceof List && ((List<?>) list).size() == size &&
             ((List<?>) list).stream().allMatch(item -> item instanceof Integer);
-    }
-
-    public static boolean getInfSpell() { return mInfinitySpell.get(); }
-
-    public static boolean getInfSpellCreative() { return mInfinitySpellCreative.get(); }
-
-    public static List<Integer> getSpellDuration() {
-        return mSpellDuration.get();
-    }
-
-    public static boolean getXpCostEnabled() {
-        return mXpCostEnabled.get();
-    }
-
-    public static boolean getXpCostCreative() {
-        return mXpCostCreative.get();
-    }
-
-    public static int getXpCost() {
-        return mXpLevelCost.get();
     }
 }

@@ -1,6 +1,5 @@
 package com.github.jodevnull.woodwalkers_spells.mixin;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
