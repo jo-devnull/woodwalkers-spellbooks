@@ -5,35 +5,31 @@ import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import com.mojang.logging.LogUtils;
 import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
 import tocraft.walkers.api.PlayerShape;
 
 @Mod(WoodwalkersSpellBooks.MODID)
-public class WoodwalkersSpellBooks {
-
+public class WoodwalkersSpellBooks
+{
     public static final String MODID = "woodwalkers_spellbooks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public WoodwalkersSpellBooks() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.mSpec, "woodwalkers-spellbooks.toml");
-
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public WoodwalkersSpellBooks(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.mSpec, "woodwalkers-spellbooks.toml");
 
         SpellRegistry.register(modEventBus);
         EffectRegistry.register(modEventBus);
     }
 
-    @Mod.EventBusSubscriber
-    public static class SpellPreCastHandler {
+    @EventBusSubscriber
+    public static class EventHandler {
         @SubscribeEvent
         public static void onSpellPreCast(SpellPreCastEvent event) {
             if (event.getEntity() instanceof ServerPlayer player) {
@@ -41,27 +37,22 @@ public class WoodwalkersSpellBooks {
                     event.setCanceled(true);
             }
         }
-    }
 
-    @Mod.EventBusSubscriber
-    public static class PlayerTickHandler {
         @SubscribeEvent
-        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-            if (event.side.isServer() && event.phase == TickEvent.Phase.START) {
-                if (event.player instanceof ServerPlayer player) {
-                    if (player.tickCount % 20 != 0 || player.isCreative() || Shapeshifting.infinitySpell(player))
-                        return;
+        public static void onPlayerTick(PlayerTickEvent.Pre event) {
+            if (event.getEntity() instanceof ServerPlayer player) {
+                if (player.tickCount % 20 != 0 || player.isCreative() || Shapeshifting.infinitySpell(player))
+                    return;
 
-                    MobEffect shapeshiftEffect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
-                    LivingEntity secondShape = PlayerShape.getCurrentShape(player);
+                final var shapeshiftEffect = EffectRegistry.SHAPESHIFTER_EFFECT;
+                final var secondShape = PlayerShape.getCurrentShape(player);
 
-                    if (!player.hasEffect(shapeshiftEffect) && secondShape != null) {
-                        Shapeshifting.doShapeshift(player, 1);
-                    }
+                if (!player.hasEffect(shapeshiftEffect) && secondShape != null) {
+                    Shapeshifting.doShapeshift(player, 1);
+                }
 
-                    else if (player.hasEffect(shapeshiftEffect) && secondShape == null) {
-                        player.removeEffect(shapeshiftEffect);
-                    }
+                else if (player.hasEffect(shapeshiftEffect) && secondShape == null) {
+                    player.removeEffect(shapeshiftEffect);
                 }
             }
         }

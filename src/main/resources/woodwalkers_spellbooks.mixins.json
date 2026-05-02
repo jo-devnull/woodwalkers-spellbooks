@@ -2,13 +2,13 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.github.jodevnull.woodwalkers_spells.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "woodwalkers_spellbooks.refmap.json",
   "mixins": [
+    "MixinSwapPackets",
     "MixinUtils"
   ],
   "client": [
-    "MixinKeypressHandler",
     "MixinWalkersClient"
   ],
   "injectors": {

@@ -1,21 +1,21 @@
 package com.github.jodevnull.woodwalkers_spells.core;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
 public class Config
 {
-    public static final ForgeConfigSpec.Builder mBuilder = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec mSpec;
+    public static final ModConfigSpec.Builder mBuilder = new ModConfigSpec.Builder();
+    public static final ModConfigSpec mSpec;
 
-    public static final ForgeConfigSpec.BooleanValue isXpCostEnabled;
-    public static final ForgeConfigSpec.BooleanValue xpCostInCreative;
-    public static final ForgeConfigSpec.BooleanValue endlessSpell;
-    public static final ForgeConfigSpec.BooleanValue endlessSpellOnCreative;
-    public static final ForgeConfigSpec.BooleanValue canUseSpellsTransformed;
-    public static final ForgeConfigSpec.ConfigValue<List<Integer>> xpLevelCost;
-    public static final ForgeConfigSpec.ConfigValue<List<Integer>> spellDuration;
+    public static final ModConfigSpec.BooleanValue isXpCostEnabled;
+    public static final ModConfigSpec.BooleanValue xpCostInCreative;
+    public static final ModConfigSpec.BooleanValue endlessSpell;
+    public static final ModConfigSpec.BooleanValue endlessSpellOnCreative;
+    public static final ModConfigSpec.BooleanValue canUseSpellsTransformed;
+    public static final ModConfigSpec.ConfigValue<List<Integer>> xpLevelCost;
+    public static final ModConfigSpec.ConfigValue<List<Integer>> spellDuration;
 
     static {
         mBuilder.push("Woodwalkers Spellbooks Configuration");
@@ -53,7 +53,6 @@ public class Config
             .define("Xp Level Cost", List.of(6, 5, 4, 3, 2, 1), list -> isFixedList(list, 6));
 
         mBuilder.pop();
-
         mSpec = mBuilder.build();
     }
 

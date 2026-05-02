@@ -12,7 +12,9 @@ public class ShapeshifterEffect extends MobEffect
     }
 
     @Override
-    public void applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
+    public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
         super.applyEffectTick(livingEntity, amplifier);
+
+        return true;
     }
 }

@@ -6,7 +6,10 @@ import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
-import io.redspace.ironsspellbooks.api.spells.*;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+import io.redspace.ironsspellbooks.api.spells.CastSource;
+import io.redspace.ironsspellbooks.api.spells.CastType;
+import io.redspace.ironsspellbooks.api.spells.SpellRarity;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.capabilities.magic.TargetEntityCastData;
 import net.minecraft.network.chat.Component;
@@ -28,10 +31,9 @@ import java.util.Optional;
 
 import static com.github.jodevnull.woodwalkers_spells.core.Shapeshifting.*;
 
-@AutoSpellConfig
 public class ShapeshiftingSpell extends AbstractSpell
 {
-    private final ResourceLocation spellId = new ResourceLocation(WoodwalkersSpellBooks.MODID, "shapeshifting");
+    private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(WoodwalkersSpellBooks.MODID, "shapeshifting");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {

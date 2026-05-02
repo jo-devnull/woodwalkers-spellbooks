@@ -39,7 +39,7 @@ public class Shapeshifting
         if (type == null)
             PlayerShape.updateShapes(player, null);
         else {
-            MobEffect effect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
+            final var effect = EffectRegistry.SHAPESHIFTER_EFFECT;
             int duration = 20 * getShapeshiftDuration(spellLevel);
 
             PlayerShape.updateShapes(player, type.create(CEntity.level(player), player));
