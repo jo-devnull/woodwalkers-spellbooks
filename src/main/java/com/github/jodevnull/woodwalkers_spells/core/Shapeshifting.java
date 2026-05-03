@@ -1,9 +1,12 @@
 package com.github.jodevnull.woodwalkers_spells.core;
 
 import com.github.jodevnull.woodwalkers_spells.EffectRegistry;
+import com.github.jodevnull.woodwalkers_spells.WoodwalkersSpellBooks;
+import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,8 +39,10 @@ public class Shapeshifting
     public static void doShapeshift(ServerPlayer player, int spellLevel) {
         var type = getSecondShape(player);
 
-        if (type == null)
+        if (type == null) {
             PlayerShape.updateShapes(player, null);
+            WoodwalkersSpellBooks.playsound(player, SoundRegistry.EVOCATION_CAST.get(), SoundSource.PLAYERS);
+        }
         else {
             MobEffect effect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
             int duration = 20 * getShapeshiftDuration(spellLevel);

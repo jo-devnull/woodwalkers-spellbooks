@@ -5,10 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "woodwalkers_spellbooks.refmap.json",
   "mixins": [
+    "MixinSwapPackets",
     "MixinUtils"
   ],
   "client": [
-    "MixinKeypressHandler",
     "MixinWalkersClient"
   ],
   "injectors": {

@@ -2,8 +2,8 @@
   "spell.woodwalkers_spellbooks.shapeshifting": "Shapeshifting",
   "effect.woodwalkers_spellbooks.shapeshifter": "Shapeshifting",
 
-  "ui.woodwalkers_spellbooks.xp_required": "needs %d xp levels",
-  "ui.woodwalkers_spellbooks.spell_duration": "lasts %d seconds",
+  "ui.woodwalkers_spellbooks.xp_required": "needs %d xp level(s)",
+  "ui.woodwalkers_spellbooks.spell_duration": "lasts %d second(s)",
   "ui.woodwalkers_spellbooks.not_enough_xp": "Not enough experience",
-  "ui.woodwalkers_spellbooks.cant_shapeshift": "First use of the spell should be on an entity"
+  "ui.woodwalkers_spellbooks.cant_shapeshift": "You'll need to use the spell on a mob atleast once to transform"
 }

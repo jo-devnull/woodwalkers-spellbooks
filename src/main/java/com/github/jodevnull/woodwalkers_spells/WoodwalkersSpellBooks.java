@@ -5,12 +5,11 @@ import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import com.mojang.logging.LogUtils;
 import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,17 +22,22 @@ public class WoodwalkersSpellBooks {
     public static final String MODID = "woodwalkers_spellbooks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public WoodwalkersSpellBooks() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.mSpec, "woodwalkers-spellbooks.toml");
+    public WoodwalkersSpellBooks(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.COMMON, Config.mSpec, "woodwalkers-spellbooks.toml");
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = context.getModEventBus();
 
         SpellRegistry.register(modEventBus);
         EffectRegistry.register(modEventBus);
     }
 
+    public static void playsound(ServerPlayer player, SoundEvent sound, SoundSource source) {
+        player.serverLevel().playSound(null, player.blockPosition(), sound, source);
+    }
+
     @Mod.EventBusSubscriber
-    public static class SpellPreCastHandler {
+    public static class ModEventHandler
+    {
         @SubscribeEvent
         public static void onSpellPreCast(SpellPreCastEvent event) {
             if (event.getEntity() instanceof ServerPlayer player) {
@@ -41,10 +45,7 @@ public class WoodwalkersSpellBooks {
                     event.setCanceled(true);
             }
         }
-    }
 
-    @Mod.EventBusSubscriber
-    public static class PlayerTickHandler {
         @SubscribeEvent
         public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
             if (event.side.isServer() && event.phase == TickEvent.Phase.START) {
@@ -52,8 +53,8 @@ public class WoodwalkersSpellBooks {
                     if (player.tickCount % 20 != 0 || player.isCreative() || Shapeshifting.infinitySpell(player))
                         return;
 
-                    MobEffect shapeshiftEffect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
-                    LivingEntity secondShape = PlayerShape.getCurrentShape(player);
+                    final var shapeshiftEffect = EffectRegistry.SHAPESHIFTER_EFFECT.get();
+                    final var secondShape = PlayerShape.getCurrentShape(player);
 
                     if (!player.hasEffect(shapeshiftEffect) && secondShape != null) {
                         Shapeshifting.doShapeshift(player, 1);
