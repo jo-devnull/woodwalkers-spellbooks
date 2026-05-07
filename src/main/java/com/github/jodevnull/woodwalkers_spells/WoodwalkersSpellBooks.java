@@ -5,6 +5,8 @@ import com.github.jodevnull.woodwalkers_spells.core.Shapeshifting;
 import com.mojang.logging.LogUtils;
 import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -26,6 +28,10 @@ public class WoodwalkersSpellBooks
 
         SpellRegistry.register(modEventBus);
         EffectRegistry.register(modEventBus);
+    }
+
+    public static void playsound(ServerPlayer player, SoundEvent sound, SoundSource source) {
+        player.serverLevel().playSound(null, player.blockPosition(), sound, source);
     }
 
     @EventBusSubscriber

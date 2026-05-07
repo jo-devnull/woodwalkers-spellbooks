@@ -82,12 +82,10 @@ repositories {
 dependencies {
     compileOnly "io.redspace:irons_spellbooks:${irons_spells}:api"
     implementation "io.redspace:irons_spellbooks:${irons_spells}"
-    
     implementation "curse.maven:$geckolib"
     implementation "curse.maven:$curios"
     implementation "curse.maven:$ironslib"
     implementation "curse.maven:$playeranimator"
-
     implementation "curse.maven:$woodwalkers"
     implementation "curse.maven:$craftedcore"
 }
