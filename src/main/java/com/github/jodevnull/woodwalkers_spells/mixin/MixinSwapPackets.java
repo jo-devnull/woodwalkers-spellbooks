@@ -13,7 +13,7 @@ import tocraft.walkers.network.impl.SwapPackets;
 public class MixinSwapPackets
 {
     @WrapOperation(
-        method = "lambda$registerWalkersRequestPacketHandler$0",
+        method = "lambda$registerWalkersRequestPacketHandler$1",
         at = @At(
             value = "INVOKE",
             target = "Ltocraft/walkers/api/PlayerShape;updateShapes(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/entity/LivingEntity;)Z"
